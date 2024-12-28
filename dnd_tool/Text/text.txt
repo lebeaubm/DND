@@ -1,0 +1,11 @@
+
+To turn on virtual 
+
+in personal/dnd_tool
+
+venv\Scripts\activate
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
