@@ -1,0 +1,138 @@
+/* 🌟 General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 🎭 Theme Variables */
+:root {
+    --bg-color: #f5f5f5; /* Light Mode Background */
+    --text-color: #333; /* Light Mode Text */
+    --navbar-bg: #333; /* Navbar Background */
+    --navbar-text: #fff; /* Navbar Text */
+    --navbar-hover-bg: #ddd; /* Navbar Hover Background */
+    --navbar-hover-text: #000; /* Navbar Hover Text */
+    --card-bg: #fff; /* Light Mode Card Background */
+    --button-bg: #007bff; /* Light Mode Button */
+    --button-text: #fff; /* Light Mode Button Text */
+}
+
+body.dark-mode {
+    --bg-color: #1a1a1a; /* Dark Mode Background */
+    --text-color: #e0e0e0; /* Dark Mode Text */
+    --navbar-bg: #444; /* Dark Mode Navbar */
+    --navbar-text: #fff; /* Navbar Text */
+    --navbar-hover-bg: #555; /* Navbar Hover Background */
+    --navbar-hover-text: #fff; /* Navbar Hover Text */
+    --card-bg: #2a2a2a; /* Dark Mode Card Background */
+    --button-bg: #6a0dad; /* Dark Mode Button */
+    --button-text: #fff; /* Dark Mode Button Text */
+}
+
+/* 🟣 Navbar Styling */
+.navbar {
+    background-color: var(--navbar-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .logo a {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--navbar-text);
+    text-decoration: none;
+}
+
+.navbar .nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+.navbar .nav-links a {
+    color: var(--navbar-text);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar .nav-links a:hover {
+    background-color: var(--navbar-hover-bg);
+    color: var(--navbar-hover-text);
+}
+
+/* 🌓 Theme Toggle Button */
+.theme-toggle {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--navbar-hover-bg);
+    transform: scale(1.05);
+}
+
+/* 📦 Content Styling */
+.content {
+    padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 📜 List Styles */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background: var(--card-bg);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+ul li strong {
+    font-size: 1.1em;
+}
+
+/* 🛠️ Buttons */
+.button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+    background-color: var(--navbar-hover-bg);
+    transform: scale(1.05);
+}
+
+/* 📌 Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 10px;
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
+    font-size: 14px;
+}

@@ -117,7 +117,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -129,7 +129,12 @@ LOGIN_REDIRECT_URL = 'dashboard'   # After logging in, users go to the dashboard
 LOGOUT_REDIRECT_URL = 'login'      # After logging out, users return to the login page.
 
 
+STATIC_URL = '/static/'
 
+# Directory for static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 
 
