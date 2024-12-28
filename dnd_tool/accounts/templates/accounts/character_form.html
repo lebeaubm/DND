@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Create/Edit Character{% endblock %}
+{% block content %}
+<h2>{% if sheet %}Edit{% else %}Create{% endif %} Character Sheet</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Name" value="{{ sheet.name|default:'' }}" required><br>
+    <input type="text" name="class_name" placeholder="Class" value="{{ sheet.class_name|default:'' }}" required><br>
+    <input type="number" name="level" placeholder="Level" value="{{ sheet.level|default:'' }}" required><br>
+    <input type="number" name="hit_points" placeholder="Hit Points" value="{{ sheet.hit_points|default:'' }}" required><br>
+    <input type="number" name="strength" placeholder="Strength" value="{{ sheet.strength|default:'' }}" required><br>
+    <input type="number" name="dexterity" placeholder="Dexterity" value="{{ sheet.dexterity|default:'' }}" required><br>
+    <input type="number" name="constitution" placeholder="Constitution" value="{{ sheet.constitution|default:'' }}" required><br>
+    <input type="number" name="intelligence" placeholder="Intelligence" value="{{ sheet.intelligence|default:'' }}" required><br>
+    <input type="number" name="wisdom" placeholder="Wisdom" value="{{ sheet.wisdom|default:'' }}" required><br>
+    <input type="number" name="charisma" placeholder="Charisma" value="{{ sheet.charisma|default:'' }}" required><br>
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'character_list' %}">Back to Character List</a>
+{% endblock %}
+
