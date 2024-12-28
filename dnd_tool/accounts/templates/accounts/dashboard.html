@@ -1,9 +1,67 @@
 {% extends 'base.html' %}
-
 {% block title %}Dashboard{% endblock %}
-
 {% block content %}
-<h2>Welcome to the Dashboard, {{ user.username }}</h2>
-<p>This is your protected area.</p>
+
+<h2>Welcome to Your Dashboard, {{ user.username }}!</h2>
+
+<!-- Sorting and Filtering Form -->
+<form method="get" style="margin-bottom: 20px;">
+    <label for="sort">Sort by:</label>
+    <select name="sort" id="sort">
+        <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Date Created</option>
+        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
+        <option value="level" {% if sort_by == 'level' %}selected{% endif %}>Level</option>
+    </select>
+
+    <label for="class">Filter by Class:</label>
+    <input type="text" name="class" id="class" placeholder="Class Name" value="{{ filter_class }}">
+
+    <label for="level">Filter by Level:</label>
+    <input type="number" name="level" id="level" placeholder="Level" value="{{ filter_level }}">
+
+    <button type="submit">Apply</button>
+</form>
+
+<!-- Display Character Sheets -->
+<h3>Your Character Sheets</h3>
+{% if page_obj %}
+    <ul>
+        {% for sheet in page_obj %}
+            <li>
+                <strong>{{ sheet.name }}</strong> - Level {{ sheet.level }} {{ sheet.class_name }}
+                <br>
+                <small>
+                    HP: {{ sheet.hit_points }} | STR: {{ sheet.strength }} | DEX: {{ sheet.dexterity }}
+                    | CON: {{ sheet.constitution }} | INT: {{ sheet.intelligence }} | WIS: {{ sheet.wisdom }}
+                    | CHA: {{ sheet.charisma }}
+                </small>
+                <br>
+                <a href="{% url 'character_edit' sheet.id %}">Edit</a> | 
+                <a href="{% url 'character_delete' sheet.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No character sheets found.</p>
+{% endif %}
+
+<!-- Pagination Controls -->
+<div>
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page=1&sort={{ sort_by }}&class={{ filter_class }}&level={{ filter_level }}">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&class={{ filter_class }}&level={{ filter_level }}">Previous</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&class={{ filter_class }}&level={{ filter_level }}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&class={{ filter_class }}&level={{ filter_level }}">Last</a>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
+
+
 

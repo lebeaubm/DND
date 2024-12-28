@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}D&D Tool{% endblock %}</title>
+    
     <style>
         /* Basic Navbar Styling */
         body {
@@ -44,8 +46,79 @@
         .content {
             padding: 20px;
         }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        ul li strong {
+            font-size: 1.1em;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form label {
+            margin-right: 10px;
+        }
+
+        form input,
+        form select {
+            margin-right: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        ul li strong {
+            font-size: 1.1em;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            margin: 0 5px;
+            color: #007bff;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
+
 <body>
     <div class="navbar">
         <div class="logo">
@@ -53,11 +126,12 @@
         </div>
         <div class="nav-links">
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}">Dashboard</a>
-                <a href="{% url 'logout' %}">Logout</a>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'character_create' %}">Create Character</a>
+            <a href="{% url 'logout' %}">Logout</a>
             {% else %}
-                <a href="{% url 'signup' %}">Sign Up</a>
-                <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
+            <a href="{% url 'login' %}">Login</a>
             {% endif %}
         </div>
     </div>
@@ -68,4 +142,5 @@
         {% endblock %}
     </div>
 </body>
+
 </html>

@@ -23,3 +23,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', views.homepage, name='homepage'),
 ]
+
+

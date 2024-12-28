@@ -1,21 +1,132 @@
 {% extends 'base.html' %}
-{% block title %}Create/Edit Character{% endblock %}
+{% block title %}{% if sheet %}Edit{% else %}Create{% endif %} Character Sheet{% endblock %}
 {% block content %}
+
 <h2>{% if sheet %}Edit{% else %}Create{% endif %} Character Sheet</h2>
+
 <form method="post">
     {% csrf_token %}
-    <input type="text" name="name" placeholder="Name" value="{{ sheet.name|default:'' }}" required><br>
-    <input type="text" name="class_name" placeholder="Class" value="{{ sheet.class_name|default:'' }}" required><br>
-    <input type="number" name="level" placeholder="Level" value="{{ sheet.level|default:'' }}" required><br>
-    <input type="number" name="hit_points" placeholder="Hit Points" value="{{ sheet.hit_points|default:'' }}" required><br>
-    <input type="number" name="strength" placeholder="Strength" value="{{ sheet.strength|default:'' }}" required><br>
-    <input type="number" name="dexterity" placeholder="Dexterity" value="{{ sheet.dexterity|default:'' }}" required><br>
-    <input type="number" name="constitution" placeholder="Constitution" value="{{ sheet.constitution|default:'' }}" required><br>
-    <input type="number" name="intelligence" placeholder="Intelligence" value="{{ sheet.intelligence|default:'' }}" required><br>
-    <input type="number" name="wisdom" placeholder="Wisdom" value="{{ sheet.wisdom|default:'' }}" required><br>
-    <input type="number" name="charisma" placeholder="Charisma" value="{{ sheet.charisma|default:'' }}" required><br>
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'character_list' %}">Back to Character List</a>
-{% endblock %}
 
+    <h3>📝 Basic Info</h3>
+    <label>Name (Required):</label>
+    <input type="text" name="name" placeholder="Character Name" value="{{ sheet.name|default:'' }}" required>
+    
+    <label>Class:</label>
+    <input type="text" name="class_name" placeholder="Class Name" value="{{ sheet.class_name|default:'' }}">
+
+    <label>Level:</label>
+    <input type="number" name="level" placeholder="Level" value="{{ sheet.level|default:'' }}">
+
+    <label>Race:</label>
+    <input type="text" name="race" placeholder="Race" value="{{ sheet.race|default:'' }}">
+
+    <label>Alignment:</label>
+    <input type="text" name="alignment" placeholder="Alignment" value="{{ sheet.alignment|default:'' }}">
+    
+    <hr>
+
+    <h3>⚔️ Combat Stats</h3>
+    <label>Hit Points:</label>
+    <input type="number" name="hit_points" placeholder="HP" value="{{ sheet.hit_points|default:'' }}">
+
+    <label>Armor Class:</label>
+    <input type="number" name="armor_class" placeholder="Armor Class" value="{{ sheet.armor_class|default:'' }}">
+
+    <label>Initiative:</label>
+    <input type="number" name="initiative" placeholder="Initiative" value="{{ sheet.initiative|default:'' }}">
+
+    <label>Speed:</label>
+    <input type="number" name="speed" placeholder="Speed" value="{{ sheet.speed|default:'' }}">
+    
+    <hr>
+
+    <h3>💪 Abilities</h3>
+    <label>Strength:</label>
+    <input type="number" name="strength" placeholder="Strength" value="{{ sheet.strength|default:'' }}">
+
+    <label>Dexterity:</label>
+    <input type="number" name="dexterity" placeholder="Dexterity" value="{{ sheet.dexterity|default:'' }}">
+
+    <label>Constitution:</label>
+    <input type="number" name="constitution" placeholder="Constitution" value="{{ sheet.constitution|default:'' }}">
+
+    <label>Intelligence:</label>
+    <input type="number" name="intelligence" placeholder="Intelligence" value="{{ sheet.intelligence|default:'' }}">
+
+    <label>Wisdom:</label>
+    <input type="number" name="wisdom" placeholder="Wisdom" value="{{ sheet.wisdom|default:'' }}">
+
+    <label>Charisma:</label>
+    <input type="number" name="charisma" placeholder="Charisma" value="{{ sheet.charisma|default:'' }}">
+
+    <hr>
+
+    <h3>🎯 Primary Attack</h3>
+    <label>Attack Name:</label>
+    <input type="text" name="primary_attack_name" placeholder="Primary Attack Name" value="{{ sheet.primary_attack_name|default:'' }}">
+
+    <label>Attack Type (Melee/Ranged):</label>
+    <input type="text" name="primary_attack_type" placeholder="Attack Type" value="{{ sheet.primary_attack_type|default:'' }}">
+
+    <label>Attack Bonus:</label>
+    <input type="number" name="primary_attack_bonus" placeholder="Attack Bonus" value="{{ sheet.primary_attack_bonus|default:'' }}">
+
+    <label>Damage:</label>
+    <input type="text" name="primary_attack_damage" placeholder="Damage (e.g., 1d8+4)" value="{{ sheet.primary_attack_damage|default:'' }}">
+
+    <label>Damage Type:</label>
+    <input type="text" name="primary_attack_damage_type" placeholder="Damage Type" value="{{ sheet.primary_attack_damage_type|default:'' }}">
+
+    <hr>
+
+    <h3>🏹 Secondary Attack</h3>
+    <label>Attack Name:</label>
+    <input type="text" name="secondary_attack_name" placeholder="Secondary Attack Name" value="{{ sheet.secondary_attack_name|default:'' }}">
+
+    <label>Attack Type (Melee/Ranged):</label>
+    <input type="text" name="secondary_attack_type" placeholder="Attack Type" value="{{ sheet.secondary_attack_type|default:'' }}">
+
+    <label>Attack Bonus:</label>
+    <input type="number" name="secondary_attack_bonus" placeholder="Attack Bonus" value="{{ sheet.secondary_attack_bonus|default:'' }}">
+
+    <label>Damage:</label>
+    <input type="text" name="secondary_attack_damage" placeholder="Damage (e.g., 1d8+4)" value="{{ sheet.secondary_attack_damage|default:'' }}">
+
+    <label>Damage Type:</label>
+    <input type="text" name="secondary_attack_damage_type" placeholder="Damage Type" value="{{ sheet.secondary_attack_damage_type|default:'' }}">
+
+    <hr>
+
+    <h3>📜 Spellcasting</h3>
+    <label>1st Level Spell Slots:</label>
+    <input type="number" name="spell_slot_1" placeholder="1st Level Slots" value="{{ sheet.spell_slots.1st|default:0 }}">
+
+    <label>2nd Level Spell Slots:</label>
+    <input type="number" name="spell_slot_2" placeholder="2nd Level Slots" value="{{ sheet.spell_slots.2nd|default:0 }}">
+
+    <label>Spells Known:</label>
+    <textarea name="spells_known">{{ sheet.spells_known|default:'' }}</textarea>
+    
+    <hr>
+
+    <h3>🛡️ Status & Preferences</h3>
+    <label>Special Abilities:</label>
+    <textarea name="special_abilities">{{ sheet.special_abilities|default:'' }}</textarea>
+
+    <label>Reactions:</label>
+    <textarea name="reactions">{{ sheet.reactions|default:'' }}</textarea>
+
+    <label>Conditions:</label>
+    <textarea name="conditions">{{ sheet.conditions|default:'' }}</textarea>
+    
+    <label>Temporary HP:</label>
+    <input type="number" name="temporary_hit_points" value="{{ sheet.temporary_hit_points|default:0 }}">
+    
+    <hr>
+    
+    <hr>
+    <button type="submit">{% if sheet %}Update{% else %}Create{% endif %} Character</button>
+    <a href="{% url 'character_list' %}">Cancel</a>
+</form>
+
+{% endblock %}
