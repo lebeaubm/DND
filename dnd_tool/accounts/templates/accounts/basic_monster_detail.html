@@ -22,9 +22,22 @@
     <tr><th>Languages:</th><td>{{ monster.languages|default:"-" }}</td></tr>
     <tr><th>Challenge Rating:</th><td>{{ monster.challenge_rating|default:"-" }}</td></tr>
     <tr><th>Abilities:</th><td>{{ monster.abilities|default:"-" }}</td></tr>
-    <tr><th>Actions:</th><td>{{ monster.actions|default:"-" }}</td></tr>
+    <!-- Actions Section -->
+    <tr>
+        <th>Actions:</th>
+        <td class="monster-details">{{ monster.actions|linebreaks|safe }}</td>
+    </tr>
+    <tr>
+        <th>Legendary Actions:</th>
+        <td class="monster-details">{{ monster.legendary_actions|linebreaks|safe }}</td>
+    </tr>
+    <tr>
+        <th>Traits:</th>
+        <td class="monster-details">{{ monster.traits|linebreaks|safe }}</td>
+    </tr>
+    <!-- <tr><th>Actions:</th><td>{{ monster.actions|default:"-" }}</td></tr>
     <tr><th>Legendary Actions:</th><td>{{ monster.legendary_actions|default:"-" }}</td></tr>
-    <tr><th>Reactions:</th><td>{{ monster.reactions|default:"-" }}</td></tr>
+    <tr><th>Reactions:</th><td>{{ monster.reactions|default:"-" }}</td></tr> -->
 </table>
 <a href="{% url 'basic_monster_list' %}">⬅️ Back to Monster List</a>
 {% endblock %}
