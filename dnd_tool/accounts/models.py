@@ -1,6 +1,51 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Monster(models.Model):
+    name = models.CharField(max_length=100)
+    size = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, null=True, blank=True)
+    alignment = models.CharField(max_length=50, null=True, blank=True)
+    
+    armor_class = models.IntegerField(null=True, blank=True)
+    hit_points = models.IntegerField(null=True, blank=True)
+    speed = models.CharField(max_length=100, null=True, blank=True)
+    
+    strength = models.IntegerField(null=True, blank=True)
+    dexterity = models.IntegerField(null=True, blank=True)
+    constitution = models.IntegerField(null=True, blank=True)
+    intelligence = models.IntegerField(null=True, blank=True)
+    wisdom = models.IntegerField(null=True, blank=True)
+    charisma = models.IntegerField(null=True, blank=True)
+    
+    saving_throws = models.TextField(null=True, blank=True)
+    damage_resistances = models.TextField(null=True, blank=True)
+    damage_immunities = models.TextField(null=True, blank=True)
+    condition_immunities = models.TextField(null=True, blank=True)
+    
+    senses = models.TextField(null=True, blank=True)
+    languages = models.TextField(null=True, blank=True)
+    challenge_rating = models.CharField(max_length=20, null=True, blank=True)
+    abilities = models.TextField(null=True, blank=True)
+    
+    actions = models.TextField(null=True, blank=True)
+    reactions = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+
+
+
+
+
+
+
+
+
+
 class CharacterSheet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
@@ -93,4 +138,26 @@ class CharacterSheet(models.Model):
         """Override save to automatically set 'finished' status."""
         self.finished = self.check_if_finished()
         super(CharacterSheet, self).save(*args, **kwargs)
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

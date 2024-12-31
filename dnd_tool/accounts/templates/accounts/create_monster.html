@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Create Monster Manually</h2>
+<form method="post">
+    {% csrf_token %}
+    <input name="name" placeholder="Name" required>
+    <input name="armor_class" placeholder="Armor Class">
+    <button type="submit">Create Monster</button>
+</form>
+{% endblock %}

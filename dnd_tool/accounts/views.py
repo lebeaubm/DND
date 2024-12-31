@@ -7,6 +7,8 @@ from .models import CharacterSheet
 from django.core.paginator import Paginator
 from django.db.models import Q  # For filtering
 from django.contrib import admin
+from .models import Monster
+from .utils.text_parser import parse_text_to_monster
 
 # Signup View
 def signup(request):
@@ -220,5 +222,24 @@ class CharacterSheetAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'level', 'finished')
     list_filter = ('finished',)
 
+@login_required
+def upload_monster(request):
+    if request.method == 'POST':
+        text = request.POST.get('monster_text')
+        try:
+            data = parse_text_to_monster(text)
+            monster = Monster.objects.create(**data)
+            messages.success(request, f"Monster '{monster.name}' created successfully!")
+            return redirect('monster_list')
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+    return render(request, 'accounts/upload_monster.html')
 
+@login_required
+def create_monster(request):
+    if request.method == 'POST':
+        data = {key: request.POST.get(key) for key in Monster._meta.fields}
+        Monster.objects.create(**data)
+        return redirect('monster_list')
+    return render(request, 'accounts/create_monster.html')
 

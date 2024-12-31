@@ -12,7 +12,8 @@ urlpatterns = [
     path('characters/create/', views.character_create, name='character_create'),
     path('characters/<int:sheet_id>/edit/', views.character_edit, name='character_edit'),
     path('characters/<int:sheet_id>/delete/', views.character_delete, name='character_delete'),
-
+    path('upload_monster/', views.upload_monster, name='upload_monster'),
+    path('create_monster/', views.create_monster, name='create_monster'),
 
 
 ]
