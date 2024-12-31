@@ -2,6 +2,7 @@
 
 {% block content %}
 <h2>📝 Monster List</h2>
+<a href="{% url 'basic_monster_list' %}">Basic Monsters</a>
 <table>
     <thead>
         <tr>
@@ -22,8 +23,9 @@
             <td>{{ monster.armor_class }}</td>
             <td>{{ monster.hit_points }}</td>
             <td>
-                <a href="#">View Details</a>
+                <a href="{% url 'monster_detail' monster.id %}">View Details</a> |
                 <a href="{% url 'edit_monster' monster.id %}">Edit</a>
+                
             </td>
         </tr>
         {% empty %}

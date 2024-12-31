@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
+
 
 class Monster(models.Model):
     name = models.CharField(max_length=100)  # Required field
@@ -35,6 +37,54 @@ class Monster(models.Model):
         return self.name
 
 
+
+class BasicMonster(models.Model):
+    # General Information
+    name = models.CharField(max_length=100, unique=True)
+    size = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, null=True, blank=True)
+    alignment = models.CharField(max_length=50, null=True, blank=True)
+
+    # Combat Stats
+    armor_class = models.IntegerField(default=0)
+    hit_points = models.IntegerField(default=0)
+    speed = models.CharField(max_length=100, null=True, blank=True)
+
+    # Ability Scores
+    strength = models.IntegerField(default=0)
+    strength_mod = models.CharField(max_length=5, null=True, blank=True)
+    dexterity = models.IntegerField(default=0)
+    dexterity_mod = models.CharField(max_length=5, null=True, blank=True)
+    constitution = models.IntegerField(default=0)
+    constitution_mod = models.CharField(max_length=5, null=True, blank=True)
+    intelligence = models.IntegerField(default=0)
+    intelligence_mod = models.CharField(max_length=5, null=True, blank=True)
+    wisdom = models.IntegerField(default=0)
+    wisdom_mod = models.CharField(max_length=5, null=True, blank=True)
+    charisma = models.IntegerField(default=0)
+    charisma_mod = models.CharField(max_length=5, null=True, blank=True)
+
+    # Additional Stats
+    saving_throws = models.CharField(max_length=255, null=True, blank=True)
+    skills = models.CharField(max_length=255, null=True, blank=True)
+    damage_resistances = models.CharField(max_length=255, null=True, blank=True)
+    damage_immunities = models.CharField(max_length=255, null=True, blank=True)
+    condition_immunities = models.CharField(max_length=255, null=True, blank=True)
+    senses = models.CharField(max_length=255, null=True, blank=True)
+    languages = models.CharField(max_length=255, null=True, blank=True)
+    challenge_rating = models.CharField(max_length=20, null=True, blank=True)
+
+    # Descriptive Fields
+    traits = models.TextField(null=True, blank=True)
+    actions = models.TextField(null=True, blank=True)
+    reactions = models.TextField(null=True, blank=True)
+    legendary_actions = models.TextField(null=True, blank=True)
+
+    # Image URL
+    image_url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 

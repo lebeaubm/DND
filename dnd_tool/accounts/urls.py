@@ -16,5 +16,8 @@ urlpatterns = [
     path('create_monster/', views.create_monster, name='create_monster'),
     path('edit_monster/<int:monster_id>/', views.edit_monster, name='edit_monster'),
     path('monsters/', views.monster_list, name='monster_list'),
+    path('monster/<int:monster_id>/', views.monster_detail, name='monster_detail'),
+    path('basic_monsters/', views.basic_monster_list, name='basic_monster_list'),
+    path('basic_monster/<int:monster_id>/', views.basic_monster_detail, name='basic_monster_detail'),
 
 ]

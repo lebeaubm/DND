@@ -9,6 +9,8 @@ from django.db.models import Q  # For filtering
 from django.contrib import admin
 from .models import Monster
 from .utils.text_parser import parse_text_to_monster
+from .models import BasicMonster
+
 
 
 # Signup View
@@ -328,6 +330,43 @@ def edit_monster(request, monster_id):
     
     return render(request, 'accounts/edit_monster.html', {'monster': monster})
 
+def monster_detail(request, monster_id):
+    monster = get_object_or_404(Monster, id=monster_id)
+    return render(request, 'accounts/monster_detail.html', {'monster': monster})
+
+def basic_monster_list(request):
+    search_query = request.GET.get('q', '')
+    sort_by = request.GET.get('sort', 'name')
+    page_number = request.GET.get('page', 1)
+    
+    monsters = BasicMonster.objects.all()
+    
+    # Search functionality
+    if search_query:
+        monsters = monsters.filter(
+            Q(name__icontains=search_query) |
+            Q(type__icontains=search_query) |
+            Q(challenge_rating__icontains=search_query)
+        )
+    
+    # Sorting functionality
+    valid_sort_fields = ['name', 'type', 'challenge_rating']
+    if sort_by in valid_sort_fields:
+        monsters = monsters.order_by(sort_by)
+    
+    # Pagination functionality
+    paginator = Paginator(monsters, 10)  # Show 10 monsters per page
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'accounts/basic_monster_list.html', {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'sort_by': sort_by,
+    })
+
+def basic_monster_detail(request, monster_id):
+    monster = get_object_or_404(BasicMonster, id=monster_id)
+    return render(request, 'accounts/basic_monster_detail.html', {'monster': monster})
 
 
 

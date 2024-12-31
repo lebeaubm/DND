@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>🐉 Monster Details: {{ monster.name }}</h2>
+<table>
+    <tr><th>Size:</th><td>{{ monster.size|default:"-" }}</td></tr>
+    <tr><th>Type:</th><td>{{ monster.type|default:"-" }}</td></tr>
+    <tr><th>Alignment:</th><td>{{ monster.alignment|default:"-" }}</td></tr>
+    <tr><th>Armor Class:</th><td>{{ monster.armor_class|default:"0" }}</td></tr>
+    <tr><th>Hit Points:</th><td>{{ monster.hit_points|default:"0" }}</td></tr>
+    <tr><th>Speed:</th><td>{{ monster.speed|default:"-" }}</td></tr>
+    <tr><th>Strength:</th><td>{{ monster.strength|default:"0" }}</td></tr>
+    <tr><th>Dexterity:</th><td>{{ monster.dexterity|default:"0" }}</td></tr>
+    <tr><th>Constitution:</th><td>{{ monster.constitution|default:"0" }}</td></tr>
+    <tr><th>Intelligence:</th><td>{{ monster.intelligence|default:"0" }}</td></tr>
+    <tr><th>Wisdom:</th><td>{{ monster.wisdom|default:"0" }}</td></tr>
+    <tr><th>Charisma:</th><td>{{ monster.charisma|default:"0" }}</td></tr>
+    <tr><th>Saving Throws:</th><td>{{ monster.saving_throws|default:"-" }}</td></tr>
+    <tr><th>Damage Resistances:</th><td>{{ monster.damage_resistances|default:"-" }}</td></tr>
+    <tr><th>Damage Immunities:</th><td>{{ monster.damage_immunities|default:"-" }}</td></tr>
+    <tr><th>Condition Immunities:</th><td>{{ monster.condition_immunities|default:"-" }}</td></tr>
+    <tr><th>Senses:</th><td>{{ monster.senses|default:"-" }}</td></tr>
+    <tr><th>Languages:</th><td>{{ monster.languages|default:"-" }}</td></tr>
+    <tr><th>Challenge Rating:</th><td>{{ monster.challenge_rating|default:"-" }}</td></tr>
+    <tr><th>Abilities:</th><td>{{ monster.abilities|default:"-" }}</td></tr>
+    <tr><th>Actions:</th><td>{{ monster.actions|default:"-" }}</td></tr>
+    <tr><th>Reactions:</th><td>{{ monster.reactions|default:"-" }}</td></tr>
+</table>
+<a href="{% url 'monster_list' %}">⬅️ Back to Monster List</a>
+{% endblock %}
