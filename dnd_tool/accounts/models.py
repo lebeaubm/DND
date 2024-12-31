@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Monster(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)  # Required field
     size = models.CharField(max_length=50, null=True, blank=True)
     type = models.CharField(max_length=50, null=True, blank=True)
     alignment = models.CharField(max_length=50, null=True, blank=True)

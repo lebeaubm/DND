@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📝 Monster List</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Size</th>
+            <th>Armor Class</th>
+            <th>Hit Points</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for monster in monsters %}
+        <tr>
+            <td>{{ monster.name }}</td>
+            <td>{{ monster.type }}</td>
+            <td>{{ monster.size }}</td>
+            <td>{{ monster.armor_class }}</td>
+            <td>{{ monster.hit_points }}</td>
+            <td>
+                <a href="#">View Details</a>
+                <a href="{% url 'edit_monster' monster.id %}">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No monsters have been uploaded yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

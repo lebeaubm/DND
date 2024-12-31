@@ -1,10 +1,78 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h2>Create Monster Manually</h2>
 <form method="post">
     {% csrf_token %}
-    <input name="name" placeholder="Name" required>
-    <input name="armor_class" placeholder="Armor Class">
+    <label>Name:</label>
+    <input name="name" required><br>
+
+    <label>Size:</label>
+    <input name="size"><br>
+
+    <label>Type:</label>
+    <input name="type"><br>
+
+    <label>Alignment:</label>
+    <input name="alignment"><br>
+
+    <label>Armor Class:</label>
+    <input name="armor_class" type="number"><br>
+
+    <label>Hit Points:</label>
+    <input name="hit_points" type="number"><br>
+
+    <label>Speed:</label>
+    <input name="speed"><br>
+
+    <label>Strength:</label>
+    <input name="strength" type="number"><br>
+
+    <label>Dexterity:</label>
+    <input name="dexterity" type="number"><br>
+
+    <label>Constitution:</label>
+    <input name="constitution" type="number"><br>
+
+    <label>Intelligence:</label>
+    <input name="intelligence" type="number"><br>
+
+    <label>Wisdom:</label>
+    <input name="wisdom" type="number"><br>
+
+    <label>Charisma:</label>
+    <input name="charisma" type="number"><br>
+
+    <label>Saving Throws:</label>
+    <input name="saving_throws"><br>
+
+    <label>Damage Resistances:</label>
+    <input name="damage_resistances"><br>
+
+    <label>Damage Immunities:</label>
+    <input name="damage_immunities"><br>
+
+    <label>Condition Immunities:</label>
+    <input name="condition_immunities"><br>
+
+    <label>Senses:</label>
+    <input name="senses"><br>
+
+    <label>Languages:</label>
+    <input name="languages"><br>
+
+    <label>Challenge Rating:</label>
+    <input name="challenge_rating"><br>
+
+    <label>Abilities:</label>
+    <textarea name="abilities"></textarea><br>
+
+    <label>Actions:</label>
+    <textarea name="actions"></textarea><br>
+
+    <label>Reactions:</label>
+    <textarea name="reactions"></textarea><br>
+
     <button type="submit">Create Monster</button>
 </form>
 {% endblock %}

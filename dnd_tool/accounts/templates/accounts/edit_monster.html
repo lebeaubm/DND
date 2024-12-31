@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Edit Monster: {{ monster.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    
+    <label>Name:</label>
+    <input name="name" value="{{ monster.name }}"><br>
+
+    <label>Size:</label>
+    <input name="size" value="{{ monster.size }}"><br>
+
+    <label>Type:</label>
+    <input name="type" value="{{ monster.type }}"><br>
+
+    <label>Alignment:</label>
+    <input name="alignment" value="{{ monster.alignment }}"><br>
+
+    <label>Armor Class:</label>
+    <input name="armor_class" type="number" value="{{ monster.armor_class|default:0 }}"><br>
+
+    <label>Hit Points:</label>
+    <input name="hit_points" type="number" value="{{ monster.hit_points|default:0 }}"><br>
+
+    <label>Speed:</label>
+    <input name="speed" value="{{ monster.speed }}"><br>
+
+    <label>Strength:</label>
+    <input name="strength" type="number" value="{{ monster.strength|default:0 }}"><br>
+
+    <label>Dexterity:</label>
+    <input name="dexterity" type="number" value="{{ monster.dexterity|default:0 }}"><br>
+
+    <label>Constitution:</label>
+    <input name="constitution" type="number" value="{{ monster.constitution|default:0 }}"><br>
+
+    <label>Intelligence:</label>
+    <input name="intelligence" type="number" value="{{ monster.intelligence|default:0 }}"><br>
+
+    <label>Wisdom:</label>
+    <input name="wisdom" type="number" value="{{ monster.wisdom|default:0 }}"><br>
+
+    <label>Charisma:</label>
+    <input name="charisma" type="number" value="{{ monster.charisma|default:0 }}"><br>
+
+    <label>Saving Throws:</label>
+    <input name="saving_throws" value="{{ monster.saving_throws }}"><br>
+
+    <label>Damage Resistances:</label>
+    <input name="damage_resistances" value="{{ monster.damage_resistances }}"><br>
+
+    <label>Damage Immunities:</label>
+    <input name="damage_immunities" value="{{ monster.damage_immunities }}"><br>
+
+    <label>Condition Immunities:</label>
+    <input name="condition_immunities" value="{{ monster.condition_immunities }}"><br>
+
+    <label>Senses:</label>
+    <input name="senses" value="{{ monster.senses }}"><br>
+
+    <label>Languages:</label>
+    <input name="languages" value="{{ monster.languages }}"><br>
+
+    <label>Challenge Rating:</label>
+    <input name="challenge_rating" value="{{ monster.challenge_rating }}"><br>
+
+    <label>Abilities:</label>
+    <textarea name="abilities">{{ monster.abilities }}</textarea><br>
+
+    <label>Actions:</label>
+    <textarea name="actions">{{ monster.actions }}</textarea><br>
+
+    <label>Reactions:</label>
+    <textarea name="reactions">{{ monster.reactions }}</textarea><br>
+
+    <button type="submit">Save Changes</button>
+</form>
+{% endblock %}
