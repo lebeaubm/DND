@@ -5,6 +5,12 @@
 <form method="POST" action="{% url 'simulate_combat' %}" class="combat-setup-form">
     {% csrf_token %}
     
+
+    <div class="action-buttons">
+        <button type="submit" class="start-combat-btn">⚔️ Start Combat</button>
+        <button type="reset" class="reset-btn">🔄 Reset</button>
+    </div>
+    
     <div class="team-container">
         <!-- Team A -->
         <div class="team team-a">
@@ -75,9 +81,6 @@
         </div>
     </div>
     
-    <div class="action-buttons">
-        <button type="submit" class="start-combat-btn">⚔️ Start Combat</button>
-        <button type="reset" class="reset-btn">🔄 Reset</button>
-    </div>
+   
 </form>
 {% endblock %}
