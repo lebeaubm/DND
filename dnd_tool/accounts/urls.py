@@ -20,4 +20,9 @@ urlpatterns = [
     path('basic_monsters/', views.basic_monster_list, name='basic_monster_list'),
     path('basic_monster/<int:monster_id>/', views.basic_monster_detail, name='basic_monster_detail'),
 
+     path('combat_setup/', views.combat_setup, name='combat_setup'),
+    path('simulate_combat/', views.simulate_combat, name='simulate_combat'),
+
+
+
 ]

@@ -9,8 +9,8 @@ from django.db.models import Q  # For filtering
 from django.contrib import admin
 from .models import Monster
 from .utils.text_parser import parse_text_to_monster
-from .models import BasicMonster
-
+from .models import CharacterSheet, BasicMonster, Monster
+from combat.combat_engine import Entity, run_combat
 
 
 # Signup View
@@ -44,7 +44,6 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("login")
-
 
 
 @login_required
@@ -91,6 +90,7 @@ def dashboard(request):
 def character_list(request):
     sheets = CharacterSheet.objects.filter(user=request.user)
     return render(request, "accounts/character_list.html", {"sheets": sheets})
+
 
 # Create Character Sheet
 @login_required
@@ -250,21 +250,21 @@ def upload_monster(request):
 
 @login_required
 def create_monster(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
+    if request.method == "POST":
+        name = request.POST.get("name")
         if not name:
             messages.error(request, "Name is required to create a monster.")
-            return redirect('create_monster')
+            return redirect("create_monster")
 
         # Ensure numeric fields are correctly set
-        armor_class = request.POST.get('armor_class') or None
-        hit_points = request.POST.get('hit_points') or None
-        strength = request.POST.get('strength') or None
-        dexterity = request.POST.get('dexterity') or None
-        constitution = request.POST.get('constitution') or None
-        intelligence = request.POST.get('intelligence') or None
-        wisdom = request.POST.get('wisdom') or None
-        charisma = request.POST.get('charisma') or None
+        armor_class = request.POST.get("armor_class") or None
+        hit_points = request.POST.get("hit_points") or None
+        strength = request.POST.get("strength") or None
+        dexterity = request.POST.get("dexterity") or None
+        constitution = request.POST.get("constitution") or None
+        intelligence = request.POST.get("intelligence") or None
+        wisdom = request.POST.get("wisdom") or None
+        charisma = request.POST.get("charisma") or None
 
         monster = Monster.objects.create(
             name=name,
@@ -279,9 +279,10 @@ def create_monster(request):
         )
 
         messages.success(request, f"Monster '{monster.name}' created successfully!")
-        return redirect('monster_list')
-    
-    return render(request, 'accounts/create_monster.html')
+        return redirect("monster_list")
+
+    return render(request, "accounts/create_monster.html")
+
 
 @login_required
 def monster_list(request):
@@ -289,85 +290,157 @@ def monster_list(request):
     Display a list of all uploaded monsters.
     """
     monsters = Monster.objects.all()
-    return render(request, 'accounts/monster_list.html', {'monsters': monsters})
+    return render(request, "accounts/monster_list.html", {"monsters": monsters})
+
 
 @login_required
 def edit_monster(request, monster_id):
     monster = get_object_or_404(Monster, id=monster_id)
-    
-    if request.method == 'POST':
-        monster.name = request.POST.get('name', monster.name)
-        monster.size = request.POST.get('size', monster.size)
-        monster.type = request.POST.get('type', monster.type)
-        monster.alignment = request.POST.get('alignment', monster.alignment)
-        
+
+    if request.method == "POST":
+        monster.name = request.POST.get("name", monster.name)
+        monster.size = request.POST.get("size", monster.size)
+        monster.type = request.POST.get("type", monster.type)
+        monster.alignment = request.POST.get("alignment", monster.alignment)
+
         # Safely handle numeric fields
-        monster.armor_class = int(request.POST.get('armor_class') or 0)
-        monster.hit_points = int(request.POST.get('hit_points') or 0)
-        monster.strength = int(request.POST.get('strength') or 0)
-        monster.dexterity = int(request.POST.get('dexterity') or 0)
-        monster.constitution = int(request.POST.get('constitution') or 0)
-        monster.intelligence = int(request.POST.get('intelligence') or 0)
-        monster.wisdom = int(request.POST.get('wisdom') or 0)
-        monster.charisma = int(request.POST.get('charisma') or 0)
+        monster.armor_class = int(request.POST.get("armor_class") or 0)
+        monster.hit_points = int(request.POST.get("hit_points") or 0)
+        monster.strength = int(request.POST.get("strength") or 0)
+        monster.dexterity = int(request.POST.get("dexterity") or 0)
+        monster.constitution = int(request.POST.get("constitution") or 0)
+        monster.intelligence = int(request.POST.get("intelligence") or 0)
+        monster.wisdom = int(request.POST.get("wisdom") or 0)
+        monster.charisma = int(request.POST.get("charisma") or 0)
 
         # Text fields
-        monster.speed = request.POST.get('speed', monster.speed)
-        monster.saving_throws = request.POST.get('saving_throws', monster.saving_throws)
-        monster.damage_resistances = request.POST.get('damage_resistances', monster.damage_resistances)
-        monster.damage_immunities = request.POST.get('damage_immunities', monster.damage_immunities)
-        monster.condition_immunities = request.POST.get('condition_immunities', monster.condition_immunities)
-        monster.senses = request.POST.get('senses', monster.senses)
-        monster.languages = request.POST.get('languages', monster.languages)
-        monster.challenge_rating = request.POST.get('challenge_rating', monster.challenge_rating)
-        monster.abilities = request.POST.get('abilities', monster.abilities)
-        monster.actions = request.POST.get('actions', monster.actions)
-        monster.reactions = request.POST.get('reactions', monster.reactions)
-        
+        monster.speed = request.POST.get("speed", monster.speed)
+        monster.saving_throws = request.POST.get("saving_throws", monster.saving_throws)
+        monster.damage_resistances = request.POST.get(
+            "damage_resistances", monster.damage_resistances
+        )
+        monster.damage_immunities = request.POST.get(
+            "damage_immunities", monster.damage_immunities
+        )
+        monster.condition_immunities = request.POST.get(
+            "condition_immunities", monster.condition_immunities
+        )
+        monster.senses = request.POST.get("senses", monster.senses)
+        monster.languages = request.POST.get("languages", monster.languages)
+        monster.challenge_rating = request.POST.get(
+            "challenge_rating", monster.challenge_rating
+        )
+        monster.abilities = request.POST.get("abilities", monster.abilities)
+        monster.actions = request.POST.get("actions", monster.actions)
+        monster.reactions = request.POST.get("reactions", monster.reactions)
+
         monster.save()
         messages.success(request, f"Monster '{monster.name}' updated successfully!")
-        return redirect('monster_list')
-    
-    return render(request, 'accounts/edit_monster.html', {'monster': monster})
+        return redirect("monster_list")
+
+    return render(request, "accounts/edit_monster.html", {"monster": monster})
+
 
 def monster_detail(request, monster_id):
     monster = get_object_or_404(Monster, id=monster_id)
-    return render(request, 'accounts/monster_detail.html', {'monster': monster})
+    return render(request, "accounts/monster_detail.html", {"monster": monster})
+
 
 def basic_monster_list(request):
-    search_query = request.GET.get('q', '')
-    sort_by = request.GET.get('sort', 'name')
-    page_number = request.GET.get('page', 1)
-    
+    search_query = request.GET.get("q", "")
+    sort_by = request.GET.get("sort", "name")
+    page_number = request.GET.get("page", 1)
+
     monsters = BasicMonster.objects.all()
-    
+
     # Search functionality
     if search_query:
         monsters = monsters.filter(
-            Q(name__icontains=search_query) |
-            Q(type__icontains=search_query) |
-            Q(challenge_rating__icontains=search_query)
+            Q(name__icontains=search_query)
+            | Q(type__icontains=search_query)
+            | Q(challenge_rating__icontains=search_query)
         )
-    
+
     # Sorting functionality
-    valid_sort_fields = ['name', 'type', 'challenge_rating']
+    valid_sort_fields = ["name", "type", "challenge_rating"]
     if sort_by in valid_sort_fields:
         monsters = monsters.order_by(sort_by)
-    
+
     # Pagination functionality
     paginator = Paginator(monsters, 10)  # Show 10 monsters per page
     page_obj = paginator.get_page(page_number)
-    
-    return render(request, 'accounts/basic_monster_list.html', {
-        'page_obj': page_obj,
-        'search_query': search_query,
-        'sort_by': sort_by,
-    })
+
+    return render(
+        request,
+        "accounts/basic_monster_list.html",
+        {
+            "page_obj": page_obj,
+            "search_query": search_query,
+            "sort_by": sort_by,
+        },
+    )
+
 
 def basic_monster_detail(request, monster_id):
     monster = get_object_or_404(BasicMonster, id=monster_id)
-    return render(request, 'accounts/basic_monster_detail.html', {'monster': monster})
+    return render(request, "accounts/basic_monster_detail.html", {"monster": monster})
 
 
 
 
+
+def combat_setup(request):
+    characters = CharacterSheet.objects.all()
+    monsters = Monster.objects.all()
+    basic_monsters = BasicMonster.objects.all()
+    
+    context = {
+        'characters': characters,
+        'monsters': monsters,
+        'basic_monsters': basic_monsters
+    }
+    return render(request, 'accounts/combat_setup.html', context)
+
+
+def simulate_combat(request):
+    if request.method == 'POST':
+        # Parse Team A
+        team_a = []
+        for key in ['team_a_characters', 'team_a_monsters', 'team_a_basic_monsters']:
+            ids = request.POST.getlist(key)
+            for entity_id in ids:
+                prefix, id = entity_id.split('_')
+                if prefix == 'char':
+                    obj = CharacterSheet.objects.get(id=id)
+                elif prefix == 'mon':
+                    obj = Monster.objects.get(id=id)
+                elif prefix == 'bmon':
+                    obj = BasicMonster.objects.get(id=id)
+                
+                team_a.append(Entity.from_db_object(obj))
+        
+        # Parse Team B
+        team_b = []
+        for key in ['team_b_characters', 'team_b_monsters', 'team_b_basic_monsters']:
+            ids = request.POST.getlist(key)
+            for entity_id in ids:
+                prefix, id = entity_id.split('_')
+                if prefix == 'char':
+                    obj = CharacterSheet.objects.get(id=id)
+                elif prefix == 'mon':
+                    obj = Monster.objects.get(id=id)
+                elif prefix == 'bmon':
+                    obj = BasicMonster.objects.get(id=id)
+                
+                team_b.append(Entity.from_db_object(obj))
+        
+        # Run Combat
+        combat_result = run_combat(team_a, team_b)
+        
+        return render(request, 'accounts/combat_result.html', {'combat_result': combat_result})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def combat_result(request):
+    combat_log = request.session.get("combat_log", [])
+    return render(request, "combat_result.html", {"combat_log": combat_log})

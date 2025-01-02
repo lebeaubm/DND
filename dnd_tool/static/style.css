@@ -171,6 +171,48 @@ tr:hover {
 } */
 
 
+/* Actions Section Styling
+.monster-details {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Arial', sans-serif;
+}
+
+.monster-actions {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.monster-actions .action {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.monster-actions .action:last-child {
+    border-bottom: none;
+}
+
+.monster-actions .action strong {
+    font-weight: bold;
+    color: #4a4a4a;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.monster-actions .action em {
+    font-style: italic;
+    color: #666;
+    margin-right: 5px;
+}
+
+.monster-actions .action span {
+    display: inline-block;
+    margin-top: 5px;
+} */
 
 
 

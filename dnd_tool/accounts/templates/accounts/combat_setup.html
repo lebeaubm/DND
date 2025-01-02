@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>⚔️ Combat Simulator Setup</h2>
+<form method="POST" action="{% url 'simulate_combat' %}">
+    {% csrf_token %}
+    
+    <h3>Team A</h3>
+    <label>Select Characters for Team A:</label>
+    <select name="team_a_characters" multiple>
+        {% for character in characters %}
+            <option value="char_{{ character.id }}">{{ character.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>Select Monsters for Team A:</label>
+    <select name="team_a_monsters" multiple>
+        {% for monster in monsters %}
+            <option value="mon_{{ monster.id }}">{{ monster.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>Select Basic Monsters for Team A:</label>
+    <select name="team_a_basic_monsters" multiple>
+        {% for basic_monster in basic_monsters %}
+            <option value="bmon_{{ basic_monster.id }}">{{ basic_monster.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <h3>Team B</h3>
+    <label>Select Characters for Team B:</label>
+    <select name="team_b_characters" multiple>
+        {% for character in characters %}
+            <option value="char_{{ character.id }}">{{ character.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>Select Monsters for Team B:</label>
+    <select name="team_b_monsters" multiple>
+        {% for monster in monsters %}
+            <option value="mon_{{ monster.id }}">{{ monster.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>Select Basic Monsters for Team B:</label>
+    <select name="team_b_basic_monsters" multiple>
+        {% for basic_monster in basic_monsters %}
+            <option value="bmon_{{ basic_monster.id }}">{{ basic_monster.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <button type="submit">Start Combat</button>
+</form>
+{% endblock %}
