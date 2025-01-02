@@ -10,7 +10,7 @@
         <button type="submit" class="start-combat-btn">⚔️ Start Combat</button>
         <button type="reset" class="reset-btn">🔄 Reset</button>
     </div>
-    
+
     <div class="team-container">
         <!-- Team A -->
         <div class="team team-a">
@@ -81,6 +81,21 @@
         </div>
     </div>
     
+    <script>
+        function filterCombatants(teamClass) {
+            let input = document.querySelector(`.${teamClass} .search-bar`).value.toLowerCase();
+            let labels = document.querySelectorAll(`.${teamClass} label`);
+            
+            labels.forEach(label => {
+                let text = label.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    label.style.display = '';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
+        }
+    </script>
    
 </form>
 {% endblock %}

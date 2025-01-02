@@ -1,64 +1,168 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}D&D Tool{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <link rel="stylesheet" href="{% static 'combat_setup.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark_mode.css' %}" id="dark-mode-stylesheet" disabled>
     
+    
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
+            const darkModeStylesheet = document.getElementById('dark-mode-stylesheet');
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+
+            if (isDarkMode) {
+                darkModeStylesheet.disabled = false;
+                document.body.classList.add('dark-mode');
+                darkModeToggle.textContent = '🌞';
+            } else {
+                darkModeToggle.textContent = '🌙';
+            }
+        });
+
+        function toggleDarkMode() {
+            const darkModeStylesheet = document.getElementById('dark-mode-stylesheet');
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            const isDarkMode = darkModeStylesheet.disabled;
+
+            if (isDarkMode) {
+                darkModeStylesheet.disabled = false;
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+                darkModeToggle.textContent = '🌞';
+            } else {
+                darkModeStylesheet.disabled = true;
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+                darkModeToggle.textContent = '🌙';
+            }
+        }
+    </script>
+
+    <!-- <script>
+        // 🌙 Apply Dark Mode on Page Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
+            const darkModeStylesheet = document.getElementById('dark-mode-stylesheet');
+            if (isDarkMode) {
+                darkModeStylesheet.disabled = false;
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // 🌗 Toggle Dark Mode
+        function toggleDarkMode() {
+            const darkModeStylesheet = document.getElementById('dark-mode-stylesheet');
+            const isDarkMode = darkModeStylesheet.disabled;
+            
+            if (isDarkMode) {
+                darkModeStylesheet.disabled = false;
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                darkModeStylesheet.disabled = true;
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+    </script> -->
+
+    <style>
+        /* Basic Navbar Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .dark-mode-toggle {
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .dark-mode-toggle:hover {
+            background: #555;
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #f4f4f4;
+        }
+
+        body.dark-mode footer {
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+        }
+
+        main {
+            padding: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- 🟣 Navbar Section -->
-    <div class="navbar">
-        <div class="logo">
-            <a href="{% url 'homepage' %}">D&D Tool</a>
-        </div>
-        <div class="nav-links">
-            {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-            <a href="{% url 'character_create' %}">Create Character</a>
-            <a href="{% url 'monster_list' %}">Monster List</a>
-            <!-- <a href="{% url 'upload_monster' %}">Upload Monster</a> -->
-            <a href="{% url 'create_monster' %}">Create Monster</a>
-            <a href="{% url 'basic_monster_list' %}">Basic Monsters</a>
-            <a href="{% url 'combat_setup' %}">⚔️ Combat Simulator</a>
-            <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-            <a href="{% url 'signup' %}">Sign Up</a>
-            <a href="{% url 'login' %}">Login</a>
-            {% endif %}
-        </div>
-        <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
-    </div>
+    <header>
+        <nav>
+            <div>
+                <a href="{% url 'homepage' %}">🏠 Home</a>
+                <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+                <a href="{% url 'character_list' %}">🧝 Characters</a>
+                <a href="{% url 'monster_list' %}">🐉 Monsters</a>
+                <a href="{% url 'basic_monster_list' %}">📚 Basic Monsters</a>
+                <a href="{% url 'combat_setup' %}">⚔️ Combat Arena</a>
+            </div>
+            <button onclick="toggleDarkMode()" class="dark-mode-toggle">🌗 Toggle Dark Mode</button>
+            
+        </nav>
+    </header>
 
-    <!-- 📦 Main Content Section -->
-    <div class="content">
+    <main>
         {% block content %}
-        <!-- Page-specific content goes here -->
+        <!-- Page-specific content will go here -->
         {% endblock %}
-    </div>
+    </main>
 
-    <!-- 📌 Footer -->
     <footer>
-        <p>&copy; 2024 D&D Tool. All Rights Reserved.</p>
+        <!-- <p>&copy; 2025 D&D Tool | Built with ❤️ using Django</p> -->
     </footer>
 
-    <!-- 🌗 Theme Toggle Script -->
-    <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                themeToggle.textContent = '☀️ Light Mode';
-            } else {
-                themeToggle.textContent = '🌙 Dark Mode';
-            }
-        });
-    </script>
-</body>
+   
 
+
+
+
+</body>
 </html>

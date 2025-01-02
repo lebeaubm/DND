@@ -1,0 +1,38 @@
+/* Dark Mode Styles */
+
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+nav {
+    background-color: #1f1f1f;
+}
+
+nav a {
+    color: #e0e0e0;
+}
+
+nav a:hover {
+    color: #bb86fc;
+}
+
+header {
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+footer {
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+button.dark-mode-toggle {
+    background-color: #444;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+button.dark-mode-toggle:hover {
+    background-color: #555;
+}

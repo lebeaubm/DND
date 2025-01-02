@@ -390,17 +390,33 @@ def basic_monster_detail(request, monster_id):
 
 
 
+# def combat_setup(request):
+#     characters = CharacterSheet.objects.all()
+#     monsters = Monster.objects.all()
+#     basic_monsters = BasicMonster.objects.all()
+    
+#     context = {
+#         'characters': characters,
+#         'monsters': monsters,
+#         'basic_monsters': basic_monsters
+#     }
+#     return render(request, 'accounts/combat_setup.html', context)
+
 def combat_setup(request):
     characters = CharacterSheet.objects.all()
     monsters = Monster.objects.all()
     basic_monsters = BasicMonster.objects.all()
-    
-    context = {
-        'characters': characters,
-        'monsters': monsters,
-        'basic_monsters': basic_monsters
-    }
-    return render(request, 'accounts/combat_setup.html', context)
+    return render(
+        request, 
+        'accounts/combat_setup.html', 
+        {
+            'characters': characters,
+            'monsters': monsters,
+            'basic_monsters': basic_monsters
+        }
+    )
+
+
 
 
 def simulate_combat(request):
