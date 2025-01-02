@@ -11,6 +11,7 @@ from .models import Monster
 from .utils.text_parser import parse_text_to_monster
 from .models import CharacterSheet, BasicMonster, Monster
 from combat.combat_engine import Entity, run_combat
+from django.http import JsonResponse
 
 
 # Signup View
@@ -404,41 +405,32 @@ def combat_setup(request):
 
 def simulate_combat(request):
     if request.method == 'POST':
-        # Parse Team A
-        team_a = []
-        for key in ['team_a_characters', 'team_a_monsters', 'team_a_basic_monsters']:
-            ids = request.POST.getlist(key)
-            for entity_id in ids:
-                prefix, id = entity_id.split('_')
-                if prefix == 'char':
-                    obj = CharacterSheet.objects.get(id=id)
-                elif prefix == 'mon':
-                    obj = Monster.objects.get(id=id)
-                elif prefix == 'bmon':
-                    obj = BasicMonster.objects.get(id=id)
-                
-                team_a.append(Entity.from_db_object(obj))
+        def get_entities(entity_ids, prefix, model):
+            entities = []
+            for entity_id in entity_ids:
+                if entity_id.startswith(prefix):
+                    obj = model.objects.get(id=entity_id.split('_')[1])
+                    entities.append(Entity.from_db_object(obj))
+            return entities
         
-        # Parse Team B
-        team_b = []
-        for key in ['team_b_characters', 'team_b_monsters', 'team_b_basic_monsters']:
-            ids = request.POST.getlist(key)
-            for entity_id in ids:
-                prefix, id = entity_id.split('_')
-                if prefix == 'char':
-                    obj = CharacterSheet.objects.get(id=id)
-                elif prefix == 'mon':
-                    obj = Monster.objects.get(id=id)
-                elif prefix == 'bmon':
-                    obj = BasicMonster.objects.get(id=id)
-                
-                team_b.append(Entity.from_db_object(obj))
+        team_a_ids = request.POST.getlist('team_a_combatants')
+        team_b_ids = request.POST.getlist('team_b_combatants')
         
-        # Run Combat
+        team_a = (
+            get_entities(team_a_ids, 'char', CharacterSheet) +
+            get_entities(team_a_ids, 'mon', Monster) +
+            get_entities(team_a_ids, 'bmon', BasicMonster)
+        )
+        team_b = (
+            get_entities(team_b_ids, 'char', CharacterSheet) +
+            get_entities(team_b_ids, 'mon', Monster) +
+            get_entities(team_b_ids, 'bmon', BasicMonster)
+        )
+        
         combat_result = run_combat(team_a, team_b)
         
         return render(request, 'accounts/combat_result.html', {'combat_result': combat_result})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return render(request, 'accounts/combat_setup.html')
 
 
 def combat_result(request):

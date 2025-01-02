@@ -1,53 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>⚔️ Combat Simulator Setup</h2>
-<form method="POST" action="{% url 'simulate_combat' %}">
+
+<form method="POST" action="{% url 'simulate_combat' %}" class="combat-setup-form">
     {% csrf_token %}
     
-    <h3>Team A</h3>
-    <label>Select Characters for Team A:</label>
-    <select name="team_a_characters" multiple>
-        {% for character in characters %}
-            <option value="char_{{ character.id }}">{{ character.name }}</option>
-        {% endfor %}
-    </select>
+    <div class="team-container">
+        <!-- Team A -->
+        <div class="team team-a">
+            <h3>🟥 Team A</h3>
+            <fieldset>
+                <legend>📜 Characters</legend>
+                {% for character in characters %}
+                    <label>
+                        <input type="checkbox" name="team_a_combatants" value="char_{{ character.id }}">
+                        {{ character.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+            
+            <fieldset>
+                <legend>🐉 Monsters</legend>
+                {% for monster in monsters %}
+                    <label>
+                        <input type="checkbox" name="team_a_combatants" value="mon_{{ monster.id }}">
+                        {{ monster.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+            
+            <fieldset>
+                <legend>💀 Basic Monsters</legend>
+                {% for basic_monster in basic_monsters %}
+                    <label>
+                        <input type="checkbox" name="team_a_combatants" value="bmon_{{ basic_monster.id }}">
+                        {{ basic_monster.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+        </div>
+        
+        <!-- Team B -->
+        <div class="team team-b">
+            <h3>🟦 Team B</h3>
+            <fieldset>
+                <legend>📜 Characters</legend>
+                {% for character in characters %}
+                    <label>
+                        <input type="checkbox" name="team_b_combatants" value="char_{{ character.id }}">
+                        {{ character.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+            
+            <fieldset>
+                <legend>🐉 Monsters</legend>
+                {% for monster in monsters %}
+                    <label>
+                        <input type="checkbox" name="team_b_combatants" value="mon_{{ monster.id }}">
+                        {{ monster.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+            
+            <fieldset>
+                <legend>💀 Basic Monsters</legend>
+                {% for basic_monster in basic_monsters %}
+                    <label>
+                        <input type="checkbox" name="team_b_combatants" value="bmon_{{ basic_monster.id }}">
+                        {{ basic_monster.name }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+        </div>
+    </div>
     
-    <label>Select Monsters for Team A:</label>
-    <select name="team_a_monsters" multiple>
-        {% for monster in monsters %}
-            <option value="mon_{{ monster.id }}">{{ monster.name }}</option>
-        {% endfor %}
-    </select>
-    
-    <label>Select Basic Monsters for Team A:</label>
-    <select name="team_a_basic_monsters" multiple>
-        {% for basic_monster in basic_monsters %}
-            <option value="bmon_{{ basic_monster.id }}">{{ basic_monster.name }}</option>
-        {% endfor %}
-    </select>
-    
-    <h3>Team B</h3>
-    <label>Select Characters for Team B:</label>
-    <select name="team_b_characters" multiple>
-        {% for character in characters %}
-            <option value="char_{{ character.id }}">{{ character.name }}</option>
-        {% endfor %}
-    </select>
-    
-    <label>Select Monsters for Team B:</label>
-    <select name="team_b_monsters" multiple>
-        {% for monster in monsters %}
-            <option value="mon_{{ monster.id }}">{{ monster.name }}</option>
-        {% endfor %}
-    </select>
-    
-    <label>Select Basic Monsters for Team B:</label>
-    <select name="team_b_basic_monsters" multiple>
-        {% for basic_monster in basic_monsters %}
-            <option value="bmon_{{ basic_monster.id }}">{{ basic_monster.name }}</option>
-        {% endfor %}
-    </select>
-    
-    <button type="submit">Start Combat</button>
+    <div class="action-buttons">
+        <button type="submit" class="start-combat-btn">⚔️ Start Combat</button>
+        <button type="reset" class="reset-btn">🔄 Reset</button>
+    </div>
 </form>
 {% endblock %}
