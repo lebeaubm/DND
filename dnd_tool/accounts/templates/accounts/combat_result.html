@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h2>⚔️ Combat Results</h2>
-<ul>
-    {% for log in combat_result %}
-        <li>{{ log }}</li>
-    {% endfor %}
-</ul>
-<a href="{% url 'combat_setup' %}">🔄 Start New Combat</a>
+
+<div class="combat-results">
+    <h3>Winner: {{ winner }}</h3>
+    <h4>Combat Log:</h4>
+    <div class="combat-log">
+        <pre>{{ combat_log }}</pre>
+    </div>
+</div>
+
+<a href="{% url 'combat_setup' %}" class="button">🔄 Start a New Combat</a>
 {% endblock %}

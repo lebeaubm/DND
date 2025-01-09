@@ -421,34 +421,22 @@ def combat_setup(request):
 
 def simulate_combat(request):
     if request.method == 'POST':
-        def get_entities(entity_ids, prefix, model):
-            entities = []
-            for entity_id in entity_ids:
-                if entity_id.startswith(prefix):
-                    obj = model.objects.get(id=entity_id.split('_')[1])
-                    entities.append(Entity.from_db_object(obj))
-            return entities
-        
         team_a_ids = request.POST.getlist('team_a_combatants')
         team_b_ids = request.POST.getlist('team_b_combatants')
-        
-        team_a = (
-            get_entities(team_a_ids, 'char', CharacterSheet) +
-            get_entities(team_a_ids, 'mon', Monster) +
-            get_entities(team_a_ids, 'bmon', BasicMonster)
-        )
-        team_b = (
-            get_entities(team_b_ids, 'char', CharacterSheet) +
-            get_entities(team_b_ids, 'mon', Monster) +
-            get_entities(team_b_ids, 'bmon', BasicMonster)
-        )
-        
-        combat_result = run_combat(team_a, team_b)
-        
-        return render(request, 'accounts/combat_result.html', {'combat_result': combat_result})
-    return render(request, 'accounts/combat_setup.html')
 
+        team_a = [Entity.from_db_object(BasicMonster.objects.get(id=int(id.split('_')[1]))) for id in team_a_ids]
+        team_b = [Entity.from_db_object(BasicMonster.objects.get(id=int(id.split('_')[1]))) for id in team_b_ids]
 
-def combat_result(request):
-    combat_log = request.session.get("combat_log", [])
-    return render(request, "combat_result.html", {"combat_log": combat_log})
+        # Run the combat simulation
+        result = run_combat(team_a, team_b)
+
+        # Ensure unpacking matches the return values from run_combat
+        if isinstance(result, tuple) and len(result) == 2:
+            winner, combat_log = result
+        else:
+            raise ValueError("run_combat must return exactly two values: winner and combat_log")
+
+        return render(request, 'accounts/combat_result.html', {
+            'winner': winner,
+            'combat_log': combat_log
+        })

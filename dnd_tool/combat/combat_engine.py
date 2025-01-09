@@ -1,166 +1,223 @@
 import random
+import re
+# from ollama_parser import parse_monster_sheet
+# from damage_calculator import calculate_accurate_damage
 
 
 class Entity:
-    def __init__(self, name, attack_bonus, damage_dice, crit_range, ac, hp):
-        """
-        Initialize an Entity (Character, Monster, etc.)
-        :param name: Entity name
-        :param attack_bonus: Attack roll bonus
-        :param damage_dice: Damage dice string (e.g., '2d6+4')
-        :param crit_range: Range for a critical hit (e.g., 20, 19-20)
-        :param ac: Armor Class
-        :param hp: Hit Points
-        """
+    def __init__(self, name, hp, actions):
         self.name = name
-        self.attack_bonus = attack_bonus  # Bonus to attack rolls
-        self.damage_dice = damage_dice  # e.g., '2d6+4'
-        self.crit_range = crit_range  # Usually 20, but may be 19-20, etc.
-        self.ac = ac  # Armor Class
-        self.hp = hp  # Current HP
+        self.max_hp = hp
+        self.hp = hp
+        self.actions = actions
+        self.attacks = []
+        self.multiattack_pattern = []
+        self.parse_attacks(actions)
 
-    def roll_damage(self):
+    def calculate_average_damage(self, damage_text):
         """
-        Parse the damage dice string and calculate average and critical damage.
-        :return: avg_damage, crit_damage
+        Calculate average damage from dice notation (e.g., '2d6+3')
         """
-        num_dice, dice_size, modifier = self.parse_damage_dice(self.damage_dice)
-        avg_damage = (num_dice * (dice_size + 1) / 2) + modifier
-        crit_damage = (num_dice * (dice_size + 1)) + modifier
-        return avg_damage, crit_damage
+        dice_match = re.match(r'(\d+)d(\d+)(?:\s*\+\s*(\d+))?', damage_text)
+        if not dice_match:
+            return 0
 
-    @staticmethod
-    def parse_damage_dice(damage_dice):
+        num_dice = int(dice_match.group(1))
+        dice_sides = int(dice_match.group(2))
+        bonus = int(dice_match.group(3)) if dice_match.group(3) else 0
+
+        avg_damage = (num_dice * (dice_sides + 1) / 2) + bonus
+        return avg_damage
+
+    def parse_attacks(self, actions):
         """
-        Parse a damage dice string like '2d6+4'.
-        :param damage_dice: Damage dice string
-        :return: num_dice, dice_size, modifier
+        Parse the attack descriptions from the 'Actions' field.
         """
-        parts = damage_dice.split('d')
-        num_dice = int(parts[0])
-        if '+' in parts[1]:
-            dice_size, modifier = map(int, parts[1].split('+'))
-        elif '-' in parts[1]:
-            dice_size, modifier = map(int, parts[1].split('-'))
-            modifier = -modifier
+        self.attacks = []
+        if not actions:
+            return
+
+        attack_patterns = [
+            (r'\*\*(.*?)\.\*\*.*?\+(\d+).*?Hit:.*?\(([\d+d\+\-]+)\)', 'explicit'),  # Named attack patterns
+            (r'\*\*(.*?)\.\*\*.*?Hit:.*?(\d+)', 'average_damage')  # Fallback average damage patterns
+        ]
+
+        for pattern, _type in attack_patterns:
+            for match in re.finditer(pattern, actions):
+                name = match.group(1).strip().lower()
+                bonus = int(match.group(2)) if len(match.groups()) > 1 else 0
+                avg_damage = self.calculate_average_damage(match.group(3)) if len(match.groups()) > 2 else 0
+
+                self.attacks.append({
+                    'name': name,
+                    'bonus': bonus,
+                    'avg_damage': avg_damage
+                })
+
+        # Debugging parsed attacks
+        print(f"DEBUG: {self.name} Parsed Attacks: {self.attacks}")
+
+        # Extract Multiattack Pattern
+        multiattack_match = re.search(r'\*\*Multiattack\.\*\* The .*? makes (.*?)\.', actions)
+        if multiattack_match:
+            attack_sequence = multiattack_match.group(1)
+            # Extract attack types and quantities
+            attack_list = re.findall(r'one with its (\w+)|two with its (\w+)', attack_sequence)
+            for one, two in attack_list:
+                if one:
+                    self.multiattack_pattern.append(one.lower())
+                if two:
+                    self.multiattack_pattern.extend([two.lower()] * 2)
+
+            print(f"DEBUG: {self.name} Multiattack Pattern: {self.multiattack_pattern}")
+
+    def normalize_attack_name(self, attack_name):
+        """
+        Normalize attack names to match available attacks.
+        """
+        attack_name_clean = attack_name.strip().rstrip('.').lower()
+        if attack_name_clean.endswith('s'):  # Handle plural forms like 'claws'
+            attack_name_clean = attack_name_clean.rstrip('s')
+        return attack_name_clean
+
+    def perform_attack(self, target, attack_name):
+        """
+        Handles a single attack of a specific type against a target.
+        """
+        attack_name_clean = self.normalize_attack_name(attack_name)
+        print(f"DEBUG: {self.name} attempting attack '{attack_name_clean}'")
+        print(f"DEBUG: Available Attacks: {[atk['name'] for atk in self.attacks]}")
+
+        matching_attacks = [
+            atk for atk in self.attacks
+            if atk['name'] == attack_name_clean
+        ]
+
+        if not matching_attacks:
+            print(f"DEBUG: No matching attack found for '{attack_name_clean}'")
+            return f"  - **{attack_name_clean}** attack failed! {self.name} doesn't know how to use it.\n"
+
+        attack = matching_attacks[0]
+        hit_roll = random.randint(1, 20) + attack['bonus']
+        if hit_roll >= 15:  # Arbitrary AC for now
+            damage = attack['avg_damage']
+            target.hp -= damage
+            return f"  - **{attack['name']}** hits for {damage} damage! {target.name} now has {max(0, target.hp)} HP.\n"
         else:
-            dice_size = int(parts[1])
-            modifier = 0
-        return num_dice, dice_size, modifier
+            return f"  - **{attack['name']}** misses.\n"
 
-    def calculate_hit_chance(self, target_ac):
+    def perform_multiattack(self, target):
         """
-        Calculate the chance to hit and crit against a target.
-        :param target_ac: Target's Armor Class
-        :return: chance_to_hit, chance_to_crit
+        Handles multiattack pattern.
         """
-        chance_to_hit = max(0, (21 - (target_ac - self.attack_bonus)) / 20)
-        chance_to_crit = (21 - self.crit_range) / 20
-        return chance_to_hit, chance_to_crit
-
-    def calculate_accurate_average_damage(self, target_ac):
-        """
-        Calculate damage using the Accurate Average Damage Formula.
-        :param target_ac: Target's Armor Class
-        :return: Accurate average damage
-        """
-        avg_damage, avg_crit_damage = self.roll_damage()
-        chance_to_hit, chance_to_crit = self.calculate_hit_chance(target_ac)
-
-        accurate_avg_damage = (avg_damage * (chance_to_hit - chance_to_crit)) + (avg_crit_damage * chance_to_crit)
-        return accurate_avg_damage
+        print(f"{self.name} performs Multiattack:")
+        log = ""
+        for attack_name in self.multiattack_pattern:
+            log += self.perform_attack(target, attack_name)
+        return log
 
     def is_alive(self):
-        """Check if the entity is still alive."""
         return self.hp > 0
 
 
-def roll_initiative(entities):
+def run_combat(team_a, team_b, max_rounds=5):
     """
-    Roll initiative for all entities.
-    :param entities: List of Entity objects
-    :return: List of Entity objects sorted by initiative
+    Simulates combat between two teams.
     """
-    initiatives = []
-    for entity in entities:
-        initiative = random.randint(1, 20) + entity.attack_bonus
-        initiatives.append((initiative, entity))
-    initiatives.sort(reverse=True, key=lambda x: x[0])
-    return [entity for _, entity in initiatives]
+    combat_log = "==== Combat Log ====\n\n"
 
+    # Initiative order
+    combatants = team_a + team_b
+    random.shuffle(combatants)
+    combatants.sort(key=lambda entity: random.randint(1, 20), reverse=True)
 
-def run_combat(team_a, team_b):
-    """
-    Simulate combat between two teams.
-    :param team_a: List of Entity objects (Team A)
-    :param team_b: List of Entity objects (Team B)
-    :return: Combat results as a list of strings
-    """
-    combat_log = []
-    all_combatants = team_a + team_b
-    all_combatants = roll_initiative(all_combatants)
+    combat_log += "⚔️ **Combat Start! Initiative Order:**\n"
+    for entity in combatants:
+        combat_log += f"- {entity.name} (Initiative: {random.randint(1, 20)})\n"
+    combat_log += "\n"
 
-    round_number = 1
-    combat_log.append(f"⚔️ Combat Begins! Initiative Order: {[entity.name for entity in all_combatants]} ⚔️")
-
-    while any(entity.is_alive() for entity in team_a) and any(entity.is_alive() for entity in team_b):
-        combat_log.append(f"\n🛡️ --- Round {round_number} --- 🛡️")
-        for attacker in all_combatants:
-            if not attacker.is_alive():
+    for round_num in range(1, max_rounds + 1):
+        combat_log += f"--- 🕒 **Round {round_num}** ---\n"
+        for entity in combatants:
+            if not entity.is_alive():
                 continue
 
-            # Determine Target
-            target_team = team_b if attacker in team_a else team_a
-            living_targets = [t for t in target_team if t.is_alive()]
-            if not living_targets:
-                continue
+            target_team = team_b if entity in team_a else team_a
+            target = next((t for t in target_team if t.is_alive()), None)
+            if not target:
+                break
 
-            target = random.choice(living_targets)
-            damage = attacker.calculate_accurate_average_damage(target.ac)
-            target.hp -= damage
+            if entity.multiattack_pattern:
+                combat_log += f"{entity.name} attacks {target.name}!\n"
+                combat_log += entity.perform_multiattack(target)
+            else:
+                combat_log += f"{entity.name} attacks {target.name}!\n"
+                combat_log += entity.perform_attack(target, 'claw')
 
-            combat_log.append(
-                f"⚔️ {attacker.name} attacks {target.name} and deals {damage:.2f} damage! ({target.name} HP: {target.hp:.2f})"
-            )
+            if not target.is_alive():
+                combat_log += f"💀 {target.name} has fallen!\n"
 
-            if target.hp <= 0:
-                combat_log.append(f"💀 {target.name} has fallen!")
-
-        round_number += 1
-
-        if not any(entity.is_alive() for entity in team_a):
-            combat_log.append("\n🏆 Team B wins the battle!")
-            break
-        if not any(entity.is_alive() for entity in team_b):
-            combat_log.append("\n🏆 Team A wins the battle!")
-            break
-
+    combat_log += "\n🏆 **Combat Over! Winner: Draw**\n"
     return combat_log
 
 
-# Example Usage (Testing)
-if __name__ == "__main__":
-    team_a = [
-        Entity("Hero1", attack_bonus=5, damage_dice="2d6+3", crit_range=20, ac=15, hp=50),
-        Entity("Hero2", attack_bonus=6, damage_dice="1d8+4", crit_range=19, ac=16, hp=60),
-    ]
 
-    team_b = [
-        Entity("Monster1", attack_bonus=4, damage_dice="2d10+2", crit_range=20, ac=14, hp=55),
-        Entity("Monster2", attack_bonus=5, damage_dice="1d12+3", crit_range=19, ac=13, hp=65),
-    ]
-
-    # results = run_combat(team_a, team_b)
-    # for line in results:
-    #     print(line)
-
-
-# Run the Combat Simulation
-    results = run_combat(team_a, team_b)
+# def simulate_combat(monster_1_text, monster_2_text):
+#     """
+#     Simulates combat between two parsed monsters.
+#     """
+#     monster_1 = parse_monster_sheet(monster_1_text)
+#     monster_2 = parse_monster_sheet(monster_2_text)
     
-    # Print Combat Log
-    print("\n=== Combat Log ===")
-    for line in results:
-        print(line)
-
+#     if not monster_1 or not monster_2:
+#         print("Failed to parse one or both monsters.")
+#         return
+    
+#     hp1 = int(monster_1['HP'].split(' ')[0])
+#     hp2 = int(monster_2['HP'].split(' ')[0])
+#     ac1 = int(monster_1['AC'])
+#     ac2 = int(monster_2['AC'])
+    
+#     print(f"⚔️ Combat Start: {monster_1['Name']} vs {monster_2['Name']} ⚔️")
+    
+#     round_counter = 1
+#     while hp1 > 0 and hp2 > 0 and round_counter <= 5:
+#         print(f"--- 🕒 Round {round_counter} ---")
         
+#         # Monster 1 Attacks
+#         for attack in monster_1['Attacks']:
+#             attack_name = attack['Name']
+#             to_hit = int(attack['ToHit'].replace('+', ''))
+#             damage = attack['Damage']
+            
+#             damage_output = calculate_accurate_damage(to_hit, damage, ac2)
+#             hp2 -= damage_output
+#             print(f"{monster_1['Name']} uses {attack_name} → Deals {damage_output:.1f} damage. {monster_2['Name']} has {hp2:.1f} HP left.")
+#             if hp2 <= 0:
+#                 print(f"🏆 {monster_1['Name']} wins!")
+#                 return
+        
+#         # Monster 2 Attacks
+#         for attack in monster_2['Attacks']:
+#             attack_name = attack['Name']
+#             to_hit = int(attack['ToHit'].replace('+', ''))
+#             damage = attack['Damage']
+            
+#             damage_output = calculate_accurate_damage(to_hit, damage, ac1)
+#             hp1 -= damage_output
+#             print(f"{monster_2['Name']} uses {attack_name} → Deals {damage_output:.1f} damage. {monster_1['Name']} has {hp1:.1f} HP left.")
+#             if hp1 <= 0:
+#                 print(f"🏆 {monster_2['Name']} wins!")
+#                 return
+        
+#         round_counter += 1
+    
+#     print("🏆 Combat ends in a draw after 5 rounds!")
+
+
+# Test Example
+if __name__ == '__main__':
+    red_dragon = Entity('Adult Red Dragon', 250, '**Multiattack.** The dragon makes three attacks: one with its bite and two with its claws. **Bite.** +14 to hit, Hit: (2d10+8). **Claw.** +14 to hit, Hit: (2d6+8).')
+    white_dragon = Entity('Adult White Dragon', 250, '**Multiattack.** The dragon makes three attacks: one with its bite and two with its claws. **Bite.** +12 to hit, Hit: (2d10+6). **Claw.** +12 to hit, Hit: (2d6+6).')
+
+    print(run_combat([red_dragon], [white_dragon]))
