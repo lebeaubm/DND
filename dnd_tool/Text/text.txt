@@ -10,9 +10,12 @@ python manage.py migrate
 python manage.py runserver
 
 
+git pull to make it my master
+git fetch origin
+git reset --hard origin/master
+git clean -fd
 
-
-
+ollama run mistral
 
 
 Git add .
